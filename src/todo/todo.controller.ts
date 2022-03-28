@@ -1,6 +1,7 @@
 import {Body, Controller, Get, Post} from '@nestjs/common';
 import {CreateTodoDto} from './CreateTodo.dto';
 import {TodoService} from './todo.service';
+import {response} from 'express';
 
 @Controller('todo')
 export class TodoController {
@@ -9,7 +10,10 @@ export class TodoController {
 
     @Get()
     async findAll() {
-        return await this.todoService.findAll()
+
+        const response = await this.todoService.findAll()
+        return response
+
     }
 
     @Post()
