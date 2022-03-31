@@ -6,6 +6,9 @@ import {
   Post,
   Req,
   Res,
+  Put,
+  Param,
+  Delete,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/CreateUser.dto';
@@ -17,6 +20,7 @@ import { env } from 'process';
 import { CreateTodoDto } from 'src/todo/CreateTodo.dto';
 import { ToDoType } from './schema/user.schema';
 import { Types } from 'mongoose';
+import UpdateToDoDto from './dto/UpdateToDo.dto';
 
 @Controller('user')
 export class UserController {
@@ -69,7 +73,6 @@ export class UserController {
       if (!validatePassword) {
         return res.status(400).json({ message: `Неверный пароль` });
       }
-      console.log(env.SECRET_KEY);
 
       const token = this.generateAccessToken(user.username, user.todolist);
       return res.json(token);
@@ -90,17 +93,33 @@ export class UserController {
 
   @Post('/add')
   async addToDo(@Req() req: Request, @Body() createTodoDto: CreateTodoDto) {
-    console.log(createTodoDto);
     const ToDo: ToDoType = {
-      id: new Types.ObjectId(),
+      id: new Types.ObjectId().toString(),
       content: createTodoDto.content,
       title: createTodoDto.title,
       date: new Date(),
       done: false,
     };
-    console.log(ToDo);
     const response = await this.userService.addToDo(req.body.username, ToDo);
     return response;
+  }
+
+  @Put('/todo')
+  async changeDone(@Body() updateToDoDto: UpdateToDoDto, @Req() req: Request) {
+    return await this.userService.changeToDo(req.body.username, updateToDoDto);
+  }
+
+  @Get('/todolist')
+  async userToDoList(@Req() req: Request) {
+    const todoList = await this.userService.getToDoList(req.body.username);
+    return todoList;
+  }
+
+  @Delete('/remove/:id')
+  async removFromTodoList(@Req() req: Request, @Param('id') id: string) {
+    console.log(id);
+
+    return await this.userService.removeToDo(req.body.username, id);
   }
 
   generateAccessToken(username, todolist) {

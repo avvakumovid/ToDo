@@ -3,6 +3,9 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { ToDoType, User, UserDocument } from './schema/user.schema';
 import { CreateUserDto } from './dto/CreateUser.dto';
+import UpdateToDoDto from './dto/UpdateToDo.dto';
+import { UserDto } from './dto/User.dto';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class UserService {
@@ -27,4 +30,31 @@ export class UserService {
     user.save();
     return { message: 'Задача добавлена' };
   }
+
+  async changeToDo(username: string, updateToDoDto: UpdateToDoDto) {
+    const { id, content, date, done, title } = updateToDoDto;
+    const user = await this.userModel.updateOne(
+      { username, 'todolist.id': id },
+      { $set: { 'todolist.$.content': content } },
+    );
+
+    // await user.save();
+    return { message: 'Данные изменены' };
+  }
+
+  async removeToDo(username: string, id: string) {
+    const user = await this.userModel.findOneAndUpdate(
+      {
+        username,
+      },
+      { $pull: { todolist: { id } } },
+    );
+  }
+
+  async getToDoList(username: string) {
+    const user = await this.userModel.findOne({ username });
+    return user.todolist;
+  }
+
+  async;
 }

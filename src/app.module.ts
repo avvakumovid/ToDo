@@ -30,7 +30,9 @@ import { ConfigModule } from '@nestjs/config';
         schema: UserSchema,
       },
     ]),
-    MongooseModule.forRoot('mongodb://localhost:27017/todo'),
+    MongooseModule.forRoot(
+      'mongodb+srv://admin:admin@todo.5gzvz.mongodb.net/todo?retryWrites=true&w=majority',
+    ),
   ],
   controllers: [TodoController, UserController],
   providers: [TodoService, UserService],

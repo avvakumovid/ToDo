@@ -4,7 +4,7 @@ import { Types } from 'mongoose';
 export type UserDocument = User & Document;
 
 export type ToDoType = {
-  id: Types.ObjectId;
+  id: string;
   title: string;
   content: string;
   done: boolean;
