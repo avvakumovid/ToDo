@@ -33,9 +33,23 @@ export class UserService {
 
   async changeToDo(username: string, updateToDoDto: UpdateToDoDto) {
     const { id, content, date, done, title } = updateToDoDto;
+    const changes = {}
+    if(content){
+      changes['todolist.$.content'] = content
+    }
+    if(date){
+      changes['todolist.$.date'] = date
+    }
+    if(done){
+      changes['todolist.$.done'] = done
+    }
+    if(title){
+      changes['todolist.$.title'] = title
+    }
+
     const user = await this.userModel.updateOne(
       { username, 'todolist.id': id },
-      { $set: { 'todolist.$.content': content } },
+      { $set: changes },
     );
 
     // await user.save();
