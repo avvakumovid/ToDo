@@ -28,7 +28,7 @@ export class UserService {
     const user = await this.userModel.findOne({ username });
     user.todolist.push(todo);
     user.save();
-    return { message: 'Задача добавлена' };
+    return user.todolist;
   }
 
   async changeToDo(username: string, updateToDoDto: UpdateToDoDto) {
